@@ -1,0 +1,27 @@
+{
+  "name": "supportbank",
+  "version": "1.0.0",
+  "type": "module",
+  "module": "index.js",
+  "description": "",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AriDemSoftwire/SupportBank.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AriDemSoftwire/SupportBank/issues"
+  },
+  "homepage": "https://github.com/AriDemSoftwire/SupportBank#readme",
+  "dependencies": {
+    "csv-parse": "^5.3.1",
+    "luxon": "^3.0.4",
+    "node-csv": "^0.1.2",
+    "readline-sync": "^1.4.10"
+  }
+}
