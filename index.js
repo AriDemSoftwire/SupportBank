@@ -16,12 +16,6 @@ log4js.configure({
 
 logger.debug("Programme starts");
 
-const lines = fs.readFileSync("Transactions2014.csv", "utf-8").split("\n");
-lines.pop();
-let lines2 = fs.readFileSync("DodgyTransactions2015.csv", "utf-8").split("\n");
-lines2.shift();
-const lines3 = lines.concat(lines2);
-
 class Transaction {
     constructor(date, from, to, narrative, amount) {
         this.date = date;
@@ -69,20 +63,12 @@ class Account {
         return Math.round(totalSum * 100) / 100;
     }
 
-    listAllTransactions() {
-        console.log(this.name);
-        for (let i = 0; i < this.transactionsFrom.length; i++) {
-            console.log(this.transactionsFrom[i]);
-        }
-        for (let i = 0; i < this.transactionsTo.length; i++) {
-            console.log(this.transactionsTo[i]);
-        }
-    }
 }
 
 let arrayOfTransactions = [];
 let arrayOfNames = [];
 let arrayOfAccounts = [];
+let arrayOfImportedData = [];
 
 function makeArrayOfTransactions(array) {
     let newArray = [];
@@ -97,16 +83,18 @@ function makeArrayOfTransactions(array) {
         );
         if (moment(line[0], "DD/MM/YYYY", true).isValid() === false) {
            logger.debug(`Error: ${line[0]} is not a date. Array index is ${i}`);
+      //     throw `Invalid value at line ${i}`;
         }
         if (parseFloat(line[4]) !== parseFloat(line[4])) {
             logger.debug(`Error: ${line[4]} is not a number. Array index is ${i}`);
+      //     throw `Invalid value at line ${i}`;
         }
     }
     return newArray;
 }
 
 function makeArrayOfNames() {
-    for (let i = 1; i < arrayOfTransactions.length - 2; i++) {
+    for (let i = 1; i < arrayOfTransactions.length; i++) {
         if (arrayOfNames.includes(arrayOfTransactions[i].to) === false) {
             arrayOfNames.push(arrayOfTransactions[i].to);
         }
@@ -122,13 +110,71 @@ function makeArrayOfAccounts() {
     return returnArray;
 }
 
-arrayOfTransactions = makeArrayOfTransactions(lines3);
+
+
+
+arrayOfTransactions = makeArrayOfTransactions(arrayOfImportedData);
 
 arrayOfNames = makeArrayOfNames();
 
 arrayOfAccounts = makeArrayOfAccounts();
 
-const userCommand = readlineSync.question("Type the command ");
+readlineSync.promptCLLoop({
+Import: function importFile (fileName) {
+    let importedFile = [];
+    importedFile = fs.readFileSync(`${fileName}`, "utf-8");
+    //console.log(importedFile);
+    if (typeof importedFile[0] === 'string') {
+        importedFile.split("\n");
+        console.log(importedFile);
+        importedFile.shift();
+        console.log(fileName + ' is imported.')
+        return importedFile;
+    } 
+    else
+    if (typeof importedFile[0] === 'object') {
+        console.log(fileName + ' is imported.')
+        return importedFile;
+    }
+    else {
+        console.log(fileName + ' is of invalid format.')
+        logger.debug(`Error: ${fileName} is of invalid format`);
+        return;
+    }
+    
+},
+List: function listTransactions (name) {
+    for (let i = 0; i < arrayOfAccounts.length; i++) {
+        (name === arrayOfAccounts[i].name)
+        for (let i = 0; i < arrayOfAccounts[i].transactionsFrom.length; i++) {
+            console.log(arrayOfAccounts[i].transactionsFrom);
+        }
+        for (let i = 0; i < arrayOfAccounts[i].transactionsTo.length; i++) {
+            console.log(arrayOfAccounts[i].transactionsTo);
+    }
+}
+},
+ListAll: function listAllAccounts () {
+    for (let i = 0; i < arrayOfNames.length; i++) {
+        const sum = arrayOfAccounts[i].calculateOwedSum();
+        console.log(
+            "Number: ",
+            i,
+            "     Name: ",
+            arrayOfAccounts[i].name,
+            "        Sum Owed: ",
+            sum
+        );
+}
+},
+Close: function() { return true; }
+})
+
+/* const userCommand = readlineSync.question("Type the command ");
+
+if (userCommand === 'Import File ') {
+    arrayOfImportedData = importFile();
+}
 if (userCommand === "List All") {
     for (let i = 0; i < arrayOfNames.length; i++) {
         const sum = arrayOfAccounts[i].calculateOwedSum();
@@ -147,4 +193,4 @@ for (let i = 0; i < arrayOfNames.length; i++) {
     if (userCommand === `List ${arrayOfNames[i]}`) {
         arrayOfAccounts[i].listAllTransactions();
     }
-}
+} */
