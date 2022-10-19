@@ -15,7 +15,7 @@ log4js.configure({
 
 //logger.debug("log4js test");
 
-let lines = fs.readFileSync('Transactions2014.csv', 'utf-8').split('\n');
+const lines = fs.readFileSync('Transactions2014.csv', 'utf-8').split('\n');
 //let lines2 = fs.readFileSync('DodgyTransactions2015.csv', 'utf-8').split('\n');
 //let lines3 = lines.concat(lines2);
 
@@ -38,12 +38,12 @@ class Account {
     }
 
 addTransactionsTo (transactions) {
-    let transactionsTo = transactions.filter(array => array.to === this.name)
+    const transactionsTo = transactions.filter(array => array.to === this.name)
     return transactionsTo;
 }
 
 addTransactionsFrom (transactions) {
-    let transactionsFrom = transactions.filter(array => array.from === this.name)
+    const transactionsFrom = transactions.filter(array => array.from === this.name)
     return transactionsFrom;
 }
 
@@ -67,17 +67,11 @@ listAllTransactions () {
     console.log(this.transactionsFrom[i]);
     }
     for (let i = 0; i < this.transactionsTo.length; i++) {
-    console.log(this.transactionsTo);
+    console.log(this.transactionsTo[i]);
 }
 
 }
 }
-
-
-
-let arrayOfTransactions = [];
-let arrayOfNames = [];
-let arrayOfAccounts = [];
 
 function createArrayOfNames () {
     for (let i = 1; i < arrayOfTransactions.length - 1; i++) {
@@ -105,16 +99,11 @@ function makeArrayOfAccounts () {
     return returnArray;
 }
 
-arrayOfTransactions = makeTransactions(lines);
+const arrayOfTransactions = makeTransactions(lines);
 
-arrayOfNames = createArrayOfNames();
+const arrayOfNames = createArrayOfNames();
 
-arrayOfAccounts = makeArrayOfAccounts();
-
-arrayOfAccounts[0].listAllTransactions();
-
-
-// addTransactionsToAccounts();
+const arrayOfAccounts = makeArrayOfAccounts();
 
 /* let userCommand = readlineSync.question('Type the command ');
 if (userCommand === 'List All') {
