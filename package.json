@@ -19,10 +19,12 @@
   },
   "homepage": "https://github.com/AriDemSoftwire/SupportBank#readme",
   "dependencies": {
+    "csv": "^6.2.1",
     "csv-parse": "^5.3.1",
     "log4js": "^6.7.0",
     "luxon": "^3.0.4",
     "node-csv": "^0.1.2",
+    "parse": "^3.4.4",
     "readline-sync": "^1.4.10"
   }
 }

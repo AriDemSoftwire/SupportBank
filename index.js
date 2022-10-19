@@ -13,11 +13,11 @@ log4js.configure({
     }
 });
 
-//logger.debug("log4js test");
+logger.debug("log4js test");
 
 const lines = fs.readFileSync('Transactions2014.csv', 'utf-8').split('\n');
-//let lines2 = fs.readFileSync('DodgyTransactions2015.csv', 'utf-8').split('\n');
-//let lines3 = lines.concat(lines2);
+let lines2 = fs.readFileSync('DodgyTransactions2015.csv', 'utf-8').split('\n');
+let lines3 = lines.concat(lines2);
 
 class Transaction {
     constructor (date, from, to, narrative, amount) {
@@ -51,13 +51,15 @@ calculateOwedSum () {
     let totalFromSum = 0;
     let totalToSum = 0;
     let totalSum = 0;
-    for (let i = 0; i < this.transactionsTo.length + this.transactionsFrom.length; i++) {
-        let addFrom = parseInt(transactionsFrom[i]);
+    for (let i = 0; i < this.transactionsFrom.length; i++) {
+        const addFrom = parseInt(this.transactionsFrom[i].amount);
         totalFromSum += addFrom;
-        let addTo = parseInt(transactionsTo[i]);
+    }
+    for (let i = 0; i < this.transactionsTo.length; i++) {
+        const addTo = parseInt(this.transactionsTo[i].amount);
         totalToSum += addTo;
     }
-    totalSum = totalToSum + totalFromSum;
+    totalSum = totalToSum - totalFromSum;
     return totalSum;
 }
 
@@ -73,22 +75,26 @@ listAllTransactions () {
 }
 }
 
-function createArrayOfNames () {
+let arrayOfTransactions = [];
+let arrayOfNames = [];
+let arrayOfAccounts = [];
+
+function makeArrayOfTransactions (array) {
+    let newArray = [];
+    for (let i = 1; i < array.length; i++) {
+        const line = array[i].split(',');
+        newArray[i] = new Transaction(line[0], line[1], line[2], line[3], line[4]);
+    }
+    return newArray;
+}
+
+function makeArrayOfNames () {
     for (let i = 1; i < arrayOfTransactions.length - 1; i++) {
         if (arrayOfNames.includes(arrayOfTransactions[i].to) === false) {
             arrayOfNames.push(arrayOfTransactions[i].to);
         }
     }
     return arrayOfNames;
-}
-
-function makeTransactions (array) {
-    let newArray = [];
-    for (let i = 1; i < array.length; i++) {
-        let line = array[i].split(',');
-        newArray[i] = new Transaction(line[0], line[1], line[2], line[3], line[4]);
-    }
-    return newArray;
 }
 
 function makeArrayOfAccounts () {
@@ -99,22 +105,23 @@ function makeArrayOfAccounts () {
     return returnArray;
 }
 
-const arrayOfTransactions = makeTransactions(lines);
+arrayOfTransactions = makeArrayOfTransactions(lines3);
 
-const arrayOfNames = createArrayOfNames();
+arrayOfNames = makeArrayOfNames();
 
-const arrayOfAccounts = makeArrayOfAccounts();
+arrayOfAccounts = makeArrayOfAccounts();
 
-/* let userCommand = readlineSync.question('Type the command ');
+
+const userCommand = readlineSync.question('Type the command ');
 if (userCommand === 'List All') {
     for (let i = 0; i < arrayOfNames.length; i++) {
-        console.log('Number: ', i, '     Name: ', arrayListAll[i].name, '        Sum Owed: ', arrayListAll[i].sumOwed);
+        const sum = arrayOfAccounts[i].calculateOwedSum();
+        console.log('Number: ', i, '     Name: ', arrayOfAccounts[i].name, '        Sum Owed: ', sum);
     }
 }
 
 for (let i = 0; i < arrayOfNames.length; i++) {
     if (userCommand === `List ${arrayOfNames[i]}`) {
-        let listOfTransactions = getAllTransactions(arrayOfNames[i]);
-        console.log(listOfTransactions);
+        arrayOfAccounts[i].listAllTransactions();
     }
-}  */
+}  
