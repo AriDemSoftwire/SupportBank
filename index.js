@@ -110,29 +110,23 @@ function makeArrayOfAccounts() {
     return returnArray;
 }
 
-
-
-
 arrayOfTransactions = makeArrayOfTransactions(arrayOfImportedData);
-
 arrayOfNames = makeArrayOfNames();
-
 arrayOfAccounts = makeArrayOfAccounts();
 
 readlineSync.promptCLLoop({
 Import: function importFile (fileName) {
-    let importedFile = [];
-    importedFile = fs.readFileSync(`${fileName}`, "utf-8");
-    //console.log(importedFile);
-    if (typeof importedFile[0] === 'string') {
-        importedFile.split("\n");
-        console.log(importedFile);
-        importedFile.shift();
+    let importedFileParsed;
+    let importedFile = fs.readFileSync(`${fileName}`, "utf-8");
+    if (fileName.includes('.csv')) {
+        importedFileParsed = importedFile.split("\n");
+        importedFileParsed.shift();
         console.log(fileName + ' is imported.')
         return importedFile;
     } 
     else
-    if (typeof importedFile[0] === 'object') {
+    if (fileName.includes('.json')) {
+        importedFileParsed = JSON.parse(importedFile);
         console.log(fileName + ' is imported.')
         return importedFile;
     }
