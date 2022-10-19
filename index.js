@@ -13,11 +13,11 @@ log4js.configure({
     }
 });
 
-logger.debug("log4js test");
+//logger.debug("log4js test");
 
 let lines = fs.readFileSync('Transactions2014.csv', 'utf-8').split('\n');
-let lines2 = fs.readFileSync('DodgyTransactions2015.csv', 'utf-8').split('\n');
-let lines3 = lines.concat(lines2);
+//let lines2 = fs.readFileSync('DodgyTransactions2015.csv', 'utf-8').split('\n');
+//let lines3 = lines.concat(lines2);
 
 class Transaction {
     constructor (date, from, to, narrative, amount) {
@@ -27,50 +27,57 @@ class Transaction {
         this.narrative = narrative;
         this.amount = amount;
     }
-
-    isValid () {
-        this.date 
-    }
-
 }
 
 class Account {
 
-    transactionsTo;
-    transactionsFrom;
-
-    constructor (name) {
+    constructor (name, transactions) {
         this.name = name;
+        this.transactionsTo = this.addTransactionsTo(transactions);
+        this.transactionsFrom = this.addTransactionsFrom(transactions);
     }
 
-addTransactionsTo () {
-
+addTransactionsTo (transactions) {
+    let transactionsTo = transactions.filter(array => array.to === this.name)
+    return transactionsTo;
 }
 
-addTransactionsFrom () {
-    
+addTransactionsFrom (transactions) {
+    let transactionsFrom = transactions.filter(array => array.from === this.name)
+    return transactionsFrom;
 }
 
 calculateOwedSum () {
-
+    let totalFromSum = 0;
+    let totalToSum = 0;
+    let totalSum = 0;
+    for (let i = 0; i < this.transactionsTo.length + this.transactionsFrom.length; i++) {
+        let addFrom = parseInt(transactionsFrom[i]);
+        totalFromSum += addFrom;
+        let addTo = parseInt(transactionsTo[i]);
+        totalToSum += addTo;
+    }
+    totalSum = totalToSum + totalFromSum;
+    return totalSum;
 }
 
 listAllTransactions () {
-    
-}
-
-}
-
-class moneyToReceive {
-    constructor (name, sumOwed) {
-        this.name = name;
-        this.sumOwed = sumOwed;
+    console.log(this.name);
+    for (let i = 0; i < this.transactionsFrom.length; i++) {
+    console.log(this.transactionsFrom[i]);
     }
+    for (let i = 0; i < this.transactionsTo.length; i++) {
+    console.log(this.transactionsTo);
 }
+
+}
+}
+
+
 
 let arrayOfTransactions = [];
 let arrayOfNames = [];
-let arrayListAll = [];
+let arrayOfAccounts = [];
 
 function createArrayOfNames () {
     for (let i = 1; i < arrayOfTransactions.length - 1; i++) {
@@ -85,60 +92,31 @@ function makeTransactions (array) {
     let newArray = [];
     for (let i = 1; i < array.length; i++) {
         let line = array[i].split(',');
-        let entry = new Transaction(line[0], line[1], line[2], line[3], line[4]);
-        if (entry.isValid) {
-            newArray[i] = entry;
-        }
-      //  
+        newArray[i] = new Transaction(line[0], line[1], line[2], line[3], line[4]);
     }
     return newArray;
 }
 
-function sumTransactionFrom (name) {
-        let totalFromSum = 0;
-        let transactionsFrom = arrayOfTransactions.filter(array => array.from === name)
-        for (let i = 0; i < transactionsFrom.length; i++) {
-            let num = parseInt(transactionsFrom[i].amount);
-            totalFromSum += num;
-        }
-        return totalFromSum;
-}
-
-function sumTransactionTo (name) {
-    let totalToSum = 0;
-    let transactionsTo = arrayOfTransactions.filter(array => array.to === name)
-    for (let i = 0; i < transactionsTo.length; i++) {
-        let num = parseInt(transactionsTo[i].amount);
-        totalToSum += num;
-    }
-    return totalToSum;
-}
-
-function makeArrayListAll () {
+function makeArrayOfAccounts () {
     let returnArray = [];
     for (let i = 0; i < arrayOfNames.length; i++) {
-        const from = sumTransactionFrom(arrayOfNames[i]);
-        const to = sumTransactionTo(arrayOfNames[i]);
-        let totalSum = parseInt(to) - parseInt(from);
-        returnArray[i] = new moneyToReceive(arrayOfNames[i], totalSum);
+        returnArray[i] = new Account(arrayOfNames[i], arrayOfTransactions);
     }
     return returnArray;
 }
 
-function getAllTransactions (name) {
-    let transactionsFrom = arrayOfTransactions.filter(array => array.from === name)
-    let transactionsTo = arrayOfTransactions.filter(array => array.to === name)
-    let finalArray = transactionsFrom.concat(transactionsTo);
-    return finalArray;
-}
-
-arrayOfTransactions = makeTransactions(lines3);
+arrayOfTransactions = makeTransactions(lines);
 
 arrayOfNames = createArrayOfNames();
 
-arrayListAll = makeArrayListAll();
+arrayOfAccounts = makeArrayOfAccounts();
 
-let userCommand = readlineSync.question('Type the command ');
+arrayOfAccounts[0].listAllTransactions();
+
+
+// addTransactionsToAccounts();
+
+/* let userCommand = readlineSync.question('Type the command ');
 if (userCommand === 'List All') {
     for (let i = 0; i < arrayOfNames.length; i++) {
         console.log('Number: ', i, '     Name: ', arrayListAll[i].name, '        Sum Owed: ', arrayListAll[i].sumOwed);
@@ -150,6 +128,4 @@ for (let i = 0; i < arrayOfNames.length; i++) {
         let listOfTransactions = getAllTransactions(arrayOfNames[i]);
         console.log(listOfTransactions);
     }
-}
-
-
+}  */
